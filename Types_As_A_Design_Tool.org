@@ -294,5 +294,3 @@ view ...
 - Listen to your types.
 - Listen to your type-signatures.
 - They are telling you things that improve your code.
-
-And if you have trouble listening, use Elm - it speaks pretty clearly!
