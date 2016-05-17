@@ -1,0 +1,298 @@
+#+OPTIONS: toc:nil num:nil
+#+OPTIONS: reveal_history:t
+#+REVEAL_THEME: black
+#+REVEAL_TRANS: convex
+#+COPYRIGHT: © Kris Jenkins, 2016
+#+TITLE: Types As A Design Tool
+#+AUTHOR: @krisajenkins
+
+* Type Whispering
+For Fun & Profit
+
+** This Is Not A "Type Wars" Talk
+** Types Encode Architecture
+- Types tell you things about your design.
+
+** Elm makes it easy to listen.
+
+#+BEGIN_SRC elm
+filter : (a -> Bool) -> List a -> List a
+#+END_SRC
+
+* More Accurate Functions
+- Types can reveal where you've been too general.
+** Before
+#+BEGIN_SRC elm
+icon : String -> String
+icon name =
+  "glyphicon glyphicon-" ++ name
+#+END_SRC
+
+** Consider
+#+BEGIN_SRC elm
+icon : String -> String
+#+END_SRC
+
+** Should Be
+#+BEGIN_SRC elm
+type Icon = Refresh | Save | Trash
+
+icon : Icon -> Html msg
+#+END_SRC
+
+** After
+#+BEGIN_SRC elm
+type Icon = Refresh | Save | Trash
+
+icon : Icon -> Html
+icon icon =
+  let
+    name = toLower (toString icon)
+  in
+    span [ class ("glyphicon glyphicon-" ++ name) ] []
+#+END_SRC
+
+* Better Function Shaping
+- Types can reveal the shape of a transformation.
+** Before
+#+BEGIN_SRC elm
+  decodeUri : String -> String
+  decodeUri uri =
+    case uri of
+      "/account" -> "dashboard"
+      "/account/settings" -> "settings"
+      "/" -> "frontpage"
+      _ -> "404"
+#+END_SRC
+
+** Consider
+#+BEGIN_SRC elm
+  decodeUri : String -> String
+#+END_SRC
+
+** Should Be
+#+BEGIN_SRC elm
+  type View = Dashboard | Settings | Frontpage | NotFound
+
+  decodeUri : String -> View
+#+END_SRC
+
+** After
+#+BEGIN_SRC elm
+  type View = Dashboard | Settings | Frontpage | NotFound
+
+  decodeUri : String -> View
+  decodeUri uri =
+    case uri of
+      "/account" -> Dashboard
+      "/account/settings" -> Settings
+      "/" -> Frontpage
+      _ -> NotFound
+#+END_SRC
+
+* Factoring Out Data Patterns
+- Types can reveal a bad data model.
+- And a better data model can remove bugs.
+** Data Model
+#+BEGIN_SRC elm
+  type alias Model =
+    { links : List Link }
+
+
+  type alias Link =
+    { name : String
+    , url : String
+    }
+#+END_SRC
+
+** Before
+#+BEGIN_SRC elm
+type Msg
+  = SetUrl Int String
+  | SetName Int String
+  | Delete Int
+  | New
+  | SaveAll
+
+linksView : Model -> Html Msg
+linksView model =
+  div []
+    (List.indexedMap linkView model.links)
+
+
+linkView : Int -> Link -> Html Msg
+linkView index link =
+  button [ onClick (Delete index) ]
+    [ text "Delete" ]
+#+END_SRC
+
+** Consider
+#+BEGIN_SRC elm
+type Msg
+  = SetUrl Int String
+  | SetName Int String
+  | Delete Int
+  | New
+  | SaveAll
+#+END_SRC
+
+** After
+#+BEGIN_SRC elm
+type LinkMsg
+  = SetUrl String
+  | SetName String
+  | Delete
+
+type Msg
+  = UpdateLink Int LinkMsg
+  | New
+  | SaveAll
+#+END_SRC
+
+** After (2)
+#+BEGIN_SRC elm
+linksView : Model -> Html Msg
+linksView model =
+  div []
+    (model.links
+      |> List.map linkView
+      |> List.indexedMap (ChangeLink >> Html.map))
+
+
+linkView : Link -> Html LinkMsg
+linkView link =
+  button [ onClick Delete ]
+    [ text "Delete" ]
+#+END_SRC
+
+* Better Representation of State
+- Types can help you model reality more accurately.
+- Which can provide a better user experience.
+** Before
+#+BEGIN_SRC elm
+  type alias Model =
+    { people : List Person
+    , lastError : Maybe Http.Error
+    }
+
+
+  initialModel =
+    { people = []
+    , lastError = Nothing
+    }
+#+END_SRC
+** Consider
+#+BEGIN_SRC elm
+  type alias Model =
+    { people : List Person
+    , lastError : Maybe Http.Error
+    }
+#+END_SRC
+
+** After
+#+BEGIN_SRC elm
+  type alias Model =
+    { people : Result Http.Error (List Person)
+    }
+#+END_SRC
+** After (2)
+#+BEGIN_SRC elm
+  type RemoteData a
+    = NotAsked
+    | Loading
+    | Failure Http.Error
+    | Success a
+
+
+  type alias Model =
+    { people : RemoteData (List Person)
+    }
+#+END_SRC
+* Generalise
+- Types can reveal where you've been too specific.
+** Before
+#+BEGIN_SRC  elm
+  debuggingView : String -> Model -> Html Msg
+  debuggingView title model =
+    div [ class "alert alert-danger" ]
+      [ h2 [] [ text title ]
+      , div []
+          [ code []
+              [ text (toString model) ]
+          ]
+      ]
+#+END_SRC
+
+** Ask Elm
+#+BEGIN_SRC markdown
+  Top-level value `debuggingView` does not have a type annotation.
+
+  15| debuggingView title model =
+      ^^^^^^^^^^^^^
+  I inferred the type annotation so you can copy it into your code:
+
+  debuggingView : String -> a -> Html b
+#+END_SRC
+
+** After
+
+#+BEGIN_SRC  elm
+  debuggingView : String -> a -> Html b
+  debuggingView title model =
+    div [ class "alert alert-danger" ]
+      [ h2 [] [ text title ]
+      , div []
+          [ code []
+              [ text (toString model) ]
+          ]
+      ]
+#+END_SRC
+
+* Reuse Ahoy
+- Types can point you to a reusable tool.
+** Before
+#+BEGIN_SRC elm
+encodeProductIds : Set Int -> Value
+encodeProductIds =
+  Set.toList
+    >> List.sort
+    >> List.map Encode.int
+    >> Encode.list
+#+END_SRC
+
+** After
+
+#+BEGIN_SRC elm
+encodeSet : (comparable -> Value) -> Set comparable -> Value
+encodeSet encoder =
+  Set.toList
+    >> List.sort
+    >> List.map encoder
+    >> Encode.list
+#+END_SRC
+
+** After (2)
+#+BEGIN_SRC sh
+  $ egrep -R 'Set.*->.*Value' src/
+#+END_SRC
+* The Illusion of Purity
+
+** Consider
+#+BEGIN_SRC elm
+view : Address a -> Int -> Html
+view ...
+#+END_SRC
+
+** After
+#+BEGIN_SRC elm
+view : Int -> Html a
+view ...
+#+END_SRC
+
+* Conclusion
+
+- Listen to your types.
+- Listen to your type-signatures.
+- They are telling you things that improve your code.
+
+And if you have trouble listening, use Elm - it speaks pretty clearly!
