@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Types As A Design Tool</title>
+<meta name="author" content="(@krisajenkins)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///Users/kris/Work/ThirdParty/reveal.js/css/reveal.css"/>
+
+<link rel="stylesheet" href="file:///Users/kris/Work/ThirdParty/reveal.js/css/theme/black.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'file:///Users/kris/Work/ThirdParty/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Types As A Design Tool</h1><h2 class="author">@krisajenkins</h2><p class="date">Created: 2016-05-17 Tue 15:05</p>
+</section>
+
+<section>
+<section id="slide-orgheadline4">
+<h2 id="orgheadline4">Type Whispering</h2>
+<p>
+For Fun &amp; Profit
+</p>
+
+</section>
+<section id="slide-orgheadline1">
+<h3 id="orgheadline1">This Is Not A "Type Wars" Talk</h3>
+</section>
+<section id="slide-orgheadline2">
+<h3 id="orgheadline2">Types Encode Architecture</h3>
+<ul>
+<li>Types tell you things about your design.</li>
+
+</ul>
+
+</section>
+<section id="slide-orgheadline3">
+<h3 id="orgheadline3">Elm makes it easy to listen.</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">filter</span> <span style="color: #A6E22E;">:</span> <span style="color: #66d9ef;">(</span>a <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Bool</span><span style="color: #66d9ef;">)</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">List</span> a <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">List</span> a
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline9">
+<h2 id="orgheadline9">More Accurate Functions</h2>
+<ul>
+<li>Types can reveal where you've been too general.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline5">
+<h3 id="orgheadline5">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">icon</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">String</span>
+<span style="color: #F92672; font-style: italic;">icon</span> name <span style="color: #A6E22E;">=</span>
+  <span style="color: #E6DB74;">"glyphicon glyphicon-"</span> <span style="color: #A6E22E;">++</span> name
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline6">
+<h3 id="orgheadline6">Consider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">icon</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">String</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline7">
+<h3 id="orgheadline7">Should Be</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">Icon</span> <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">Refresh</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Save</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Trash</span>
+
+<span style="color: #F92672; font-style: italic;">icon</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Icon</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> msg
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline8">
+<h3 id="orgheadline8">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">Icon</span> <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">Refresh</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Save</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Trash</span>
+
+<span style="color: #F92672; font-style: italic;">icon</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Icon</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span>
+<span style="color: #F92672; font-style: italic;">icon</span> icon <span style="color: #A6E22E;">=</span>
+  <span style="color: #66D9EF;">let</span>
+    name <span style="color: #A6E22E;">=</span> toLower <span style="color: #66d9ef;">(</span>toString icon<span style="color: #66d9ef;">)</span>
+  <span style="color: #66D9EF;">in</span>
+    span <span style="color: #66d9ef;">[</span> class <span style="color: #a6e22e;">(</span><span style="color: #E6DB74;">"glyphicon glyphicon-"</span> <span style="color: #A6E22E;">++</span> name<span style="color: #a6e22e;">)</span> <span style="color: #66d9ef;">]</span> <span style="color: #66d9ef;">[]</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline14">
+<h2 id="orgheadline14">Better Function Shaping</h2>
+<ul>
+<li>Types can reveal the shape of a transformation.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline10">
+<h3 id="orgheadline10">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">decodeUri</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">String</span>
+<span style="color: #F92672; font-style: italic;">decodeUri</span> uri <span style="color: #A6E22E;">=</span>
+  <span style="color: #66D9EF;">case </span>uri <span style="color: #66D9EF;">of</span>
+    <span style="color: #E6DB74;">"/account"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #E6DB74;">"dashboard"</span>
+    <span style="color: #E6DB74;">"/account/settings"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #E6DB74;">"settings"</span>
+    <span style="color: #E6DB74;">"/"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #E6DB74;">"frontpage"</span>
+    _ <span style="color: #A6E22E;">-&gt;</span> <span style="color: #E6DB74;">"404"</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline11">
+<h3 id="orgheadline11">Consider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">decodeUri</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">String</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline12">
+<h3 id="orgheadline12">Should Be</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">View</span> <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">Dashboard</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Settings</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Frontpage</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">NotFound</span>
+
+<span style="color: #F92672; font-style: italic;">decodeUri</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">View</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline13">
+<h3 id="orgheadline13">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">View</span> <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">Dashboard</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Settings</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Frontpage</span> <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">NotFound</span>
+
+<span style="color: #F92672; font-style: italic;">decodeUri</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">View</span>
+<span style="color: #F92672; font-style: italic;">decodeUri</span> uri <span style="color: #A6E22E;">=</span>
+  <span style="color: #66D9EF;">case </span>uri <span style="color: #66D9EF;">of</span>
+    <span style="color: #E6DB74;">"/account"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Dashboard</span>
+    <span style="color: #E6DB74;">"/account/settings"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Settings</span>
+    <span style="color: #E6DB74;">"/"</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Frontpage</span>
+    _ <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">NotFound</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline20">
+<h2 id="orgheadline20">Factoring Out Data Patterns</h2>
+<ul>
+<li>Types can reveal a bad data model.</li>
+<li>And a better data model can remove bugs.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline15">
+<h3 id="orgheadline15">Data Model</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> links <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">List</span> <span style="color: #66D9EF;">Link</span> <span style="color: #66d9ef;">}</span>
+
+
+<span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Link</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> name <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #66D9EF;">,</span> url <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline16">
+<h3 id="orgheadline16">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">Msg</span>
+  <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">SetUrl</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SetName</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Delete</span> <span style="color: #66D9EF;">Int</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">New</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SaveAll</span>
+
+<span style="color: #F92672; font-style: italic;">linksView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> <span style="color: #66D9EF;">Msg</span>
+<span style="color: #F92672; font-style: italic;">linksView</span> model <span style="color: #A6E22E;">=</span>
+  div <span style="color: #66d9ef;">[]</span>
+    <span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>indexedMap linkView model<span style="color: #A6E22E;">.</span>links<span style="color: #66d9ef;">)</span>
+
+
+<span style="color: #F92672; font-style: italic;">linkView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Int</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Link</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> <span style="color: #66D9EF;">Msg</span>
+<span style="color: #F92672; font-style: italic;">linkView</span> index link <span style="color: #A6E22E;">=</span>
+  button <span style="color: #66d9ef;">[</span> onClick <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">Delete</span> index<span style="color: #a6e22e;">)</span> <span style="color: #66d9ef;">]</span>
+    <span style="color: #66d9ef;">[</span> text <span style="color: #E6DB74;">"Delete"</span> <span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline17">
+<h3 id="orgheadline17">Consider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">Msg</span>
+  <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">SetUrl</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SetName</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Delete</span> <span style="color: #66D9EF;">Int</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">New</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SaveAll</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline18">
+<h3 id="orgheadline18">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">LinkMsg</span>
+  <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">SetUrl</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SetName</span> <span style="color: #66D9EF;">String</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Delete</span>
+
+<span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">Msg</span>
+  <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">UpdateLink</span> <span style="color: #66D9EF;">Int</span> <span style="color: #66D9EF;">LinkMsg</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">New</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">SaveAll</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline19">
+<h3 id="orgheadline19">After (2)</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">linksView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> <span style="color: #66D9EF;">Msg</span>
+<span style="color: #F92672; font-style: italic;">linksView</span> model <span style="color: #A6E22E;">=</span>
+  div <span style="color: #66d9ef;">[]</span>
+    <span style="color: #66d9ef;">(</span>model<span style="color: #A6E22E;">.</span>links
+      <span style="color: #A6E22E;">|&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>map linkView
+      <span style="color: #A6E22E;">|&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>indexedMap <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">ChangeLink</span> <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">Html</span><span style="color: #A6E22E;">.</span>map<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+
+
+<span style="color: #F92672; font-style: italic;">linkView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Link</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> <span style="color: #66D9EF;">LinkMsg</span>
+<span style="color: #F92672; font-style: italic;">linkView</span> link <span style="color: #A6E22E;">=</span>
+  button <span style="color: #66d9ef;">[</span> onClick <span style="color: #66D9EF;">Delete</span> <span style="color: #66d9ef;">]</span>
+    <span style="color: #66d9ef;">[</span> text <span style="color: #E6DB74;">"Delete"</span> <span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline25">
+<h2 id="orgheadline25">Better Representation of State</h2>
+<ul>
+<li>Types can help you model reality more accurately.</li>
+<li>Which can provide a better user experience.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline21">
+<h3 id="orgheadline21">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> people <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">List</span> <span style="color: #66D9EF;">Person</span>
+  <span style="color: #66D9EF;">,</span> lastError <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Maybe</span> <span style="color: #66D9EF;">Http</span><span style="color: #A6E22E;">.</span><span style="color: #66D9EF;">Error</span>
+  <span style="color: #66d9ef;">}</span>
+
+
+<span style="color: #F92672; font-style: italic;">initialModel</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> people <span style="color: #A6E22E;">=</span> <span style="color: #a6e22e;">[]</span>
+  <span style="color: #66D9EF;">,</span> lastError <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">Nothing</span>
+  <span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgheadline22">
+<h3 id="orgheadline22">Consider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> people <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">List</span> <span style="color: #66D9EF;">Person</span>
+  <span style="color: #66D9EF;">,</span> lastError <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Maybe</span> <span style="color: #66D9EF;">Http</span><span style="color: #A6E22E;">.</span><span style="color: #66D9EF;">Error</span>
+  <span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline23">
+<h3 id="orgheadline23">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> people <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Result</span> <span style="color: #66D9EF;">Http</span><span style="color: #A6E22E;">.</span><span style="color: #66D9EF;">Error</span> <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">List</span> <span style="color: #66D9EF;">Person</span><span style="color: #a6e22e;">)</span>
+  <span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgheadline24">
+<h3 id="orgheadline24">After (2)</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #66D9EF;">type </span><span style="color: #66D9EF;">RemoteData</span> a
+  <span style="color: #A6E22E;">=</span> <span style="color: #66D9EF;">NotAsked</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Loading</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Failure</span> <span style="color: #66D9EF;">Http</span><span style="color: #A6E22E;">.</span><span style="color: #66D9EF;">Error</span>
+  <span style="color: #A6E22E;">|</span> <span style="color: #66D9EF;">Success</span> a
+
+
+<span style="color: #66D9EF;">type alias </span><span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66d9ef;">{</span> people <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">RemoteData</span> <span style="color: #a6e22e;">(</span><span style="color: #66D9EF;">List</span> <span style="color: #66D9EF;">Person</span><span style="color: #a6e22e;">)</span>
+  <span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline29">
+<h2 id="orgheadline29">Generalise</h2>
+<ul>
+<li>Types can reveal where you've been too specific.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline26">
+<h3 id="orgheadline26">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">debuggingView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Model</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> <span style="color: #66D9EF;">Msg</span>
+<span style="color: #F92672; font-style: italic;">debuggingView</span> title model <span style="color: #A6E22E;">=</span>
+  div <span style="color: #66d9ef;">[</span> class <span style="color: #E6DB74;">"alert alert-danger"</span> <span style="color: #66d9ef;">]</span>
+    <span style="color: #66d9ef;">[</span> h2 <span style="color: #a6e22e;">[]</span> <span style="color: #a6e22e;">[</span> text title <span style="color: #a6e22e;">]</span>
+    <span style="color: #66D9EF;">,</span> div <span style="color: #a6e22e;">[]</span>
+        <span style="color: #a6e22e;">[</span> code <span style="color: #e6db74;">[]</span>
+            <span style="color: #e6db74;">[</span> text <span style="color: #8f8f8f;">(</span>toString model<span style="color: #8f8f8f;">)</span> <span style="color: #e6db74;">]</span>
+        <span style="color: #a6e22e;">]</span>
+    <span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline27">
+<h3 id="orgheadline27">Ask Elm</h3>
+<div class="org-src-container">
+
+<pre  class="src src-markdown">Top-level value <span style="color: #465457;">`</span><span style="color: #66D9EF;">debuggingView</span><span style="color: #465457;">`</span> does not have a type annotation.
+
+15| debuggingView title model =
+    ^^^^^^^^^^^^^
+I inferred the type annotation so you can copy it into your code:
+
+debuggingView : String -&gt; a -&gt; Html b
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline28">
+<h3 id="orgheadline28">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">debuggingView</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">String</span> <span style="color: #A6E22E;">-&gt;</span> a <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> b
+<span style="color: #F92672; font-style: italic;">debuggingView</span> title model <span style="color: #A6E22E;">=</span>
+  div <span style="color: #66d9ef;">[</span> class <span style="color: #E6DB74;">"alert alert-danger"</span> <span style="color: #66d9ef;">]</span>
+    <span style="color: #66d9ef;">[</span> h2 <span style="color: #a6e22e;">[]</span> <span style="color: #a6e22e;">[</span> text title <span style="color: #a6e22e;">]</span>
+    <span style="color: #66D9EF;">,</span> div <span style="color: #a6e22e;">[]</span>
+        <span style="color: #a6e22e;">[</span> code <span style="color: #e6db74;">[]</span>
+            <span style="color: #e6db74;">[</span> text <span style="color: #8f8f8f;">(</span>toString model<span style="color: #8f8f8f;">)</span> <span style="color: #e6db74;">]</span>
+        <span style="color: #a6e22e;">]</span>
+    <span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline33">
+<h2 id="orgheadline33">Reuse Ahoy</h2>
+<ul>
+<li>Types can point you to a reusable tool.</li>
+
+</ul>
+</section>
+<section id="slide-orgheadline30">
+<h3 id="orgheadline30">Before</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">encodeProductIds</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Set</span> <span style="color: #66D9EF;">Int</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Value</span>
+<span style="color: #F92672; font-style: italic;">encodeProductIds</span> <span style="color: #A6E22E;">=</span>
+  <span style="color: #66D9EF;">Set</span><span style="color: #A6E22E;">.</span>toList
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>sort
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>map <span style="color: #66D9EF;">Encode</span><span style="color: #A6E22E;">.</span>int
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">Encode</span><span style="color: #A6E22E;">.</span>list
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline31">
+<h3 id="orgheadline31">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">encodeSet</span> <span style="color: #A6E22E;">:</span> <span style="color: #66d9ef;">(</span>comparable <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Value</span><span style="color: #66d9ef;">)</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Set</span> comparable <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Value</span>
+<span style="color: #F92672; font-style: italic;">encodeSet</span> encoder <span style="color: #A6E22E;">=</span>
+  <span style="color: #66D9EF;">Set</span><span style="color: #A6E22E;">.</span>toList
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>sort
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">List</span><span style="color: #A6E22E;">.</span>map encoder
+    <span style="color: #A6E22E;">&gt;&gt;</span> <span style="color: #66D9EF;">Encode</span><span style="color: #A6E22E;">.</span>list
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline32">
+<h3 id="orgheadline32">After (2)</h3>
+<div class="org-src-container">
+
+<pre  class="src src-sh">$ egrep -R <span style="color: #E6DB74;">'Set.*-&gt;.*Value'</span> src/
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline36">
+<h2 id="orgheadline36">The Illusion of Purity</h2>
+<div class="outline-text-2" id="text-orgheadline36">
+</div></section>
+<section id="slide-orgheadline34">
+<h3 id="orgheadline34">Consider</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">view</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Address</span> a <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Int</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span>
+<span style="color: #F92672; font-style: italic;">view</span> <span style="color: #A6E22E;">...</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline35">
+<h3 id="orgheadline35">After</h3>
+<div class="org-src-container">
+
+<pre  class="src src-elm"><span style="color: #F92672; font-style: italic;">view</span> <span style="color: #A6E22E;">:</span> <span style="color: #66D9EF;">Int</span> <span style="color: #A6E22E;">-&gt;</span> <span style="color: #66D9EF;">Html</span> a
+<span style="color: #F92672; font-style: italic;">view</span> <span style="color: #A6E22E;">...</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline37">
+<h2 id="orgheadline37">Conclusion</h2>
+<ul>
+<li>Listen to your types.</li>
+<li>Listen to your type-signatures.</li>
+<li>They are telling you things that improve your code.</li>
+
+</ul>
+
+<p>
+And if you have trouble listening, use Elm - it speaks pretty clearly!
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///Users/kris/Work/ThirdParty/reveal.js/lib/js/head.min.js"></script>
+<script src="file:///Users/kris/Work/ThirdParty/reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'convex', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
